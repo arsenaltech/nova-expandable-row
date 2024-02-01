@@ -105,11 +105,12 @@ class ExpandableRow extends Field implements \Laravel\Nova\Fields\Unfillable
      * @param bool $shouldShowIcon
      *
      */
-    public function showIcon(string $icon = 'warning',bool $shouldShowIcon = true)
+    public function showIcon(string $iconForExpand = 'warning', string $iconForHideExpand = 'warning', bool $shouldShowIcon = true)
     {
         return $this->withMeta([
-            'showIcon' => $shouldShowIcon,
-            'icon' => $icon,
+            'iconForExpand' => $iconForExpand,
+            'iconForHideExpand' => $iconForHideExpand,
+            'showIcon' => $shouldShowIcon
         ]);
     }
 }

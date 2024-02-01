@@ -3,81 +3,40 @@
     <Teleport :to="toggleTeleportTarget" v-if="isMounted" :disabled="!this.field.moveToActions">
       <div
         class="relative rounded active:outline-none active:ring font-bold focus:outline-none focus:ring focus:ring-primary-200 dark:focus:ring-gray-600 -order-1 flex items-center justify-center"
-        :class="this.field.moveToActions?'pl-7':'px-7'"
-        style="order: -1" @click.stop="toggleExpandedRow">
+        :class="this.field.moveToActions ? 'pl-7' : 'px-7'" style="order: -1" @click.stop="toggleExpandedRow">
 
-        <span v-if="this.field.showIcon" class="absolute left-0 text-yellow-500 mr-2">
-          <component
-            :is="`heroicons-outline-${this.field.icon}`"
-            height="24"
-            width="24"
-          />
+        <span v-if="this.field.showIcon" class="absolute left-0  mr-2 p-2">
+          <component :is="`heroicons-solid-${rowExpanded ? this.field.iconForHideExpand : this.field.iconForExpand}`"
+            height="21" width="21" />
         </span>
 
 
-        <span v-if="!this.field.moveToActions">{{this.field.toggleLabel}}</span>
+        <span v-if="!this.field.moveToActions">{{ this.field.toggleLabel }}</span>
 
         <button class="toolbar-button flex items-center cursor-pointer select-none">
           <div class="py-0.5 px-2 rounded">
-            <svg :class="{ 'rotate-180': rowExpanded }" class=" relative opacity-0 flex flex-shrink-0 transform ml-auto"
-              xmlns="http://www.w3.org/2000/svg" width="14" height="12" viewBox="0 0 10 6" to="">
-              <path class="fill-current"
-                d="M8.292893.292893c.390525-.390524 1.023689-.390524 1.414214 0 .390524.390525.390524 1.023689 0 1.414214l-4 4c-.390525.390524-1.023689.390524-1.414214 0l-4-4c-.390524-.390525-.390524-1.023689 0-1.414214.390525-.390524 1.023689-.390524 1.414214 0L5 3.585786 8.292893.292893z">
-              </path>
-            </svg>
+
           </div>
         </button>
       </div>
     </Teleport>
   </span>
 
+  <Teleport :to="to" v-if="isMounted" class="bg-gray-50 border-b border-gray-200 dark:border-gray-700">
+    <td :colspan="2" v-if="rowExpanded && resource"></td>
+    <td :colspan="columnCount - 2" v-if="rowExpanded && resource">
+      <div style="padding-bottom: 0;">
+        <div class="px-2 py-4 space-y-4">
+          <div :key="index" v-for="(field, index) in resource.fields" :index="index">
+            <h4 class="font-bold"><span>{{ field.name }}</span></h4>
+            <button v-for="value in field.value" type="button" class="w-full">
+              <div class="font-semibold flex flex-row justify-start items-center" v-html="value.display"></div>
+            </button>
 
-  <Teleport :to="to" v-if="isMounted">
-    <td :colspan="1" v-if="rowExpanded && resource"></td>
-    <td :colspan="columnCount - 1" v-if="rowExpanded && resource">
-      <div class="px-4">
-        <div class="bg-white dark:bg-gray-800 rounded-b shadow pb-2 px-6 divide-y divide-gray-100 dark:divide-gray-700 opacity-40">
-
-
-          <!-- <component :key="index" v-for="(field, index) in resource.fields" :index="index"
-            :is="`detail-${field.component}`" :resource-name="resourceName" :resource-id="resourceId" :resource="resource"
-            :field="field" /> -->
-
-
-          <div class="flex flex-col md:flex-row -mx-6 px-6 py-2 md:py-0 space-y-2 md:space-y-0" :key="index"
-            v-for="(field, index) in resource.fields" :index="index">
-            <div class="md:w-1/4 md:py-3 max-w-xs">
-              <h4 class="font-bold"><span>{{ field.name }}</span></h4>
-            </div>
-            <div class="md:w-3/4 md:py-3 break-all lg:break-words max-w-xl">
-              <div>
-                <div>
-
-                  <button v-for="value in field.value" type="button"
-                    class=" w-full flex items-center text-left rounded px-1 py-1 !cursor-default">
-                    <div class="flex items-center space-x-3">
-                      <div>
-                        <div class="text-xs font-semibold" v-html="value.display"></div>
-                      </div>
-                    </div>
-                  </button>
-
-                  <button v-if="!field.value.length" type="button"
-                    class=" w-full flex items-center text-left rounded px-1 py-1 !cursor-default">
-                    <div class="flex items-center space-x-3">
-                      <div>
-                        <p class="text-xs font-semibold">-</p>
-                      </div>
-                    </div>
-                  </button>
-
-
-                </div>
-              </div>
-            </div>
+            <button v-if="!field.value.length" type="button" class="w-full">
+              <div class="text-xs font-semibold">-</div>
+            </button>
           </div>
-
-
 
         </div>
       </div>
@@ -107,7 +66,7 @@ export default {
 
   mounted() {
     this.$nextTick(() => {
-    
+
       // Create a table row to teleport the expanded row to
       this.createTableRow();
     });
@@ -133,12 +92,12 @@ export default {
 
       tr.insertAdjacentElement('afterend', this.trNext);
       this.to = this.trNext;
-      
+
 
       const actionItmes = tr.querySelector('.flex.items-center.justify-end.space-x-0.text-gray-400');
       this.toggleTeleportTarget = actionItmes;
 
-      
+
       this.isMounted = true;
 
     },
@@ -146,7 +105,7 @@ export default {
     toggleExpandedRow() {
       this.rowExpanded = !this.rowExpanded;
       this.trNext.classList.toggle('rowExpanded');
-      
+
       if (this.field.expandingData) {
         this.resource = {
           fields: [],
@@ -197,23 +156,33 @@ export default {
 }
 </script>
 <style>
+.bg-gray-100.rowExpanded {
+  background: #fff;
+}
+
+:is(.dark .dark\:bg-gray-800).rowExpanded {
+  background: #1e293b;
+}
+
 .rotate-180 {
   transform: rotate(180deg);
 }
+
 .px-7 {
   padding-left: 1.75rem;
   padding-right: 1.75rem;
 }
+
 .pl-7 {
   padding-left: 1.75rem;
 }
 
 /* Add padding bottom only to the last expanded row */
-.rowExpanded  > td:last-child > div{
+.rowExpanded>td:last-child>div {
   padding-bottom: 1rem;
 }
-.bg-gray-100.dark\:bg-gray-800.rowExpanded:has(~ .rowExpanded) > td:last-child > div{
-      padding-bottom: 0rem!important;
-}
 
+.bg-gray-100.dark\:bg-gray-800.rowExpanded:has(~ .rowExpanded)>td:last-child>div {
+  padding-bottom: 0rem !important;
+}
 </style>
