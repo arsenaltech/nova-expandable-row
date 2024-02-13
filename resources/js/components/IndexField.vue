@@ -23,8 +23,8 @@
   </span>
 
   <Teleport :to="to" v-if="isMounted" class="bg-gray-50 border-b border-gray-200 dark:border-gray-700">
-    <td :colspan="2" v-if="rowExpanded && resource"></td>
-    <td :colspan="columnCount - 2" v-if="rowExpanded && resource">
+    <td :colspan="2" v-if="rowExpanded && resource" class="td-fit"></td>
+    <td :colspan="columnCount - 2" v-if="rowExpanded && resource" class="td-fit">
       <div style="padding-bottom: 0;">
         <div class="px-2 py-4 space-y-4">
           <div :key="index" v-for="(field, index) in resource.fields" :index="index">
